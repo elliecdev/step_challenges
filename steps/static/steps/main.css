@@ -1,0 +1,64 @@
+:root {
+    --brand-primary: #6c63ff;
+    --brand-primary-hover: #5a54d6;
+    --brand-soft-bg: #f4f3ff;
+}
+
+/* Navbar */
+.navbar.is-primary
+
+/*, .navbar-menu.is-active .navbar-item*/
+    {
+    background-color: var(--brand-primary) !important;
+}
+
+.navbar-brand {
+    background-color: var(--brand-primary) !important;
+}
+
+.navbar.is-primary .navbar-item,
+.navbar.is-primary {
+    color: #ffffff;
+}
+
+/* Hamburger Navbar */
+.navbar-menu.is-active .navbar-item {
+    background-color: #fff !important;
+    color: #485fc7 !important;
+}
+
+/* Navbar hover */
+.navbar-item:hover {
+    background-color: var(--brand-primary-hover) !important;
+}
+
+a.navbar-item.is-active {
+    background-color: var(--brand-primary-hover) !important;
+}
+
+/* Hamburger hover */
+.navbar-menu.is-active .navbar-item:hover {
+    background-color: var(--brand-soft-bg) !important;
+}
+
+/* Buttons */
+.button.is-primary {
+    background-color: var(--brand-primary);
+    border-color: var(--brand-primary);
+    color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 8px 20px rgba(108, 99, 255, 0.25);
+    transition: all 0.2s ease;
+}
+
+.button.is-primary:hover,
+.button.is-primary:focus {
+    background-color: var(--brand-primary-hover);
+    border-color: var(--brand-primary-hover);
+    transform: translateY(-1px);
+}
+
+/* Soft background section */
+.section.is-soft {
+    background-color: var(--brand-soft-bg);
+}

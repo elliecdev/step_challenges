@@ -1,1 +1,63 @@
-<h1>Step Challenges home page!</h1>
+{% extends "steps/base.html" %}
+
+{% block content %}
+    <!-- HERO / MAIN -->
+    <section class="section is-soft">
+    <div class="container has-text-centered">
+      <h1 class="title">{{ current_challenge.name }}</h1>
+      <p class="subtitle">
+        Ending in {{ current_challenge.end }}
+      </p>
+        {% for steps in steps_list %}
+            {{steps.date_added|date:"F d, Y"}}: {{steps.participant.username}} {{steps.steps}}<br />
+        {% endfor %}
+
+      <button class="button is-primary is-medium mt-4">
+        Get Started
+      </button>
+    </div>
+    </section>
+
+    <!-- CONTENT -->
+      <section class="section">
+        <div class="container">
+          <div class="columns">
+            {% for challenge in challenges %}
+                {% if not challenge.active %}
+                     <div class="column">
+                      <div class="box">
+                        <h2 class="title is-5">{{ challenge.name }}</h2>
+                        <p>
+                          <p>Ended <strong>{{ challenge.end }}</strong></p>
+                        </p>
+                      </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+
+
+{#            <div class="column">#}
+{#              <div class="box">#}
+{#                <h2 class="title is-5">Mobile Friendly</h2>#}
+{#                <p>#}
+{#                  Responsive layout and touch-friendly buttons ensure a great#}
+{#                  experience on all devices.#}
+{#                </p>#}
+{#              </div>#}
+{#            </div>#}
+{##}
+{#            <div class="column">#}
+{#              <div class="box">#}
+{#                <h2 class="title is-5">Django Ready</h2>#}
+{#                <p>#}
+{#                  This layout can be dropped directly into a Django base template#}
+{#                  and extended across your app.#}
+{#                </p>#}
+{#              </div>#}
+{#            </div>#}
+{#          </div>#}
+        </div>
+      </section>
+
+
+{% endblock content %}

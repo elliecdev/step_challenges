@@ -1,0 +1,84 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  {% if title %}
+    <title>Step Challenges - {{ title }}</title>
+  {% else %}
+    <title>Step Challenges</title>
+  {% endif %}
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Bulma CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css" />
+
+  <!-- Custom Theme -->
+  <link rel="stylesheet" href="{% static 'steps/main.css' %}" />
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar is-primary" role="navigation" aria-label="main navigation">
+    <div class="navbar-brand">
+      <a class="navbar-item has-text-weight-bold" href="{% url 'steps-home' %}">
+        Step Challenges
+      </a>
+
+      <!-- Hamburger -->
+      <a
+        role="button"
+        class="navbar-burger"
+        aria-label="menu"
+        aria-expanded="false"
+        data-target="mainNavbar"
+      >
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+      </a>
+    </div>
+
+    <div id="mainNavbar" class="navbar-menu">
+      <div class="navbar-start">
+        <a class="navbar-item is-active" href="{% url 'steps-home' %}">Home</a>
+        <a class="navbar-item" href="">Leaderboard</a>
+        <a class="navbar-item">Past Challenges</a>
+        
+      </div>
+    </div>
+  </nav>
+
+  {% block content %} {% endblock %}
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="content has-text-centered">
+      <p>
+        <strong>Step Challenges</strong>
+      </p>
+      <p class="is-size-7">
+        © 2026 Step Challenges. All rights reserved.
+      </p>
+    </div>
+  </footer>
+
+  <!-- Hamburger Menu Script -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const burgers = document.querySelectorAll(".navbar-burger");
+
+      burgers.forEach(burger => {
+        burger.addEventListener("click", () => {
+          const target = burger.dataset.target;
+          const menu = document.getElementById(target);
+
+          burger.classList.toggle("is-active");
+          menu.classList.toggle("is-active");
+        });
+      });
+    });
+  </script>
+
+</body>
+</html>
