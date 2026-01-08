@@ -1,0 +1,30 @@
+{
+    // === Python interpreter ===
+    "python.defaultInterpreterPath": ".venv/bin/python",
+    // === Pylance analysis for Django apps ===
+    "python.analysis.extraPaths": [
+        "./" // Project root
+    ],
+    // === Formatting ===
+    "editor.formatOnSave": true,
+    "python.formatting.provider": "black",
+    "editor.codeActionsOnSave": {
+        "source.organizeImports": true
+    },
+    // === Linting ===
+    "python.linting.enabled": true,
+    "python.linting.flake8Enabled": true,
+    // === Django debugging hint ===
+    "python.testing.pytestEnabled": true,
+    "python.testing.pytestArgs": [
+        "tests"
+    ],
+    // === Editor preferences ===
+    "editor.tabSize": 4,
+    "editor.detectIndentation": false,
+    "files.exclude": {
+        "**/__pycache__": true,
+        "**/*.pyc": true,
+        "**/.DS_Store": true
+    }
+}
