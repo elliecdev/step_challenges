@@ -1,5 +1,38 @@
 {% extends "steps/base.html" %}
 
 {% block content %}
-    Leaderboard page
+    <section class="section">
+  <div class="container">
+
+    <h1 class="title is-4 has-text-centered mb-5">
+      Leaderboard
+    </h1>
+
+    <div class="columns is-centered">
+      <div class="column is-12-mobile is-6-tablet is-6-desktop">
+
+        <div class="table-container">
+          <table class="table is-striped is-hoverable is-fullwidth">
+            <thead>
+              <tr>
+                <th>Rank</th>
+                <th>Name</th>
+                <th class="has-text-right">Total Steps</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>1</td><td>Alice Johnson</td><td class="has-text-right">980</td></tr>
+              <tr><td>2</td><td>Brian Smith</td><td class="has-text-right">945</td></tr>
+              <tr><td>3</td><td>Carla Nguyen</td><td class="has-text-right">910</td></tr>
+              <!-- … rows 4–24 unchanged … -->
+              <tr><td>24</td><td>Zack Miller</td><td class="has-text-right">580</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</section>
 {% endblock content %}
