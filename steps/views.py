@@ -34,3 +34,11 @@ def home(request):
         'challenges': challenges,
     }
     return render(request, 'steps/home.html', context)
+
+
+def leaderboard(request):
+    context = {
+        'current_challenge': challenges[0],
+        'challenges': challenges,
+    }
+    return render(request, 'steps/leaderboard.html', context)
