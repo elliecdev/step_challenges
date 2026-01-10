@@ -116,3 +116,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+
+# Redirect participants after login
+LOGIN_REDIRECT_URL = '/'  # where participants go after successful login
+LOGIN_URL = '/login'      # URL to redirect if not logged in

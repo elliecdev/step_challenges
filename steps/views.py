@@ -1,4 +1,6 @@
 from django.shortcuts import render
+from django.contrib.auth.views import LoginView
+from .forms import BulmaLoginForm
 
 challenges = [
     {
@@ -42,3 +44,8 @@ def leaderboard(request):
         'challenges': challenges,
     }
     return render(request, 'steps/leaderboard.html', context)
+
+
+class FrontendLoginView(LoginView):
+    template_name = "steps/login.html"
+    authentication_form = BulmaLoginForm

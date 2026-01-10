@@ -1,0 +1,56 @@
+{% extends "steps/base.html" %}
+
+{% block content %}
+<section class="section">
+  <div class="container">
+
+    <div class="columns is-centered mt-6">
+      <div class="column is-12-mobile is-6-tablet is-4-desktop">
+
+        <div class="card">
+          <div class="card-content">
+
+            <h1 class="title is-4 has-text-centered mb-5">
+              Login
+            </h1>
+
+            {% if form.errors %}
+              <div class="notification is-danger">
+                Invalid username or password
+              </div>
+            {% endif %}
+
+            <form method="post">
+                {% csrf_token %}
+
+                <div class="field">
+                    <label class="label">Username</label>
+                    <div class="control">
+                    {{ form.username }}
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="label">Password</label>
+                    <div class="control">
+                    {{ form.password }}
+                    </div>
+                </div>
+
+                <div class="field">
+                    <button type="submit" class="button is-primary is-fullwidth">
+                    Login
+                    </button>
+                </div>
+            </form>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</section>
+
+{% endblock %}
