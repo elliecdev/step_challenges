@@ -1,5 +1,6 @@
 from django.contrib import admin
 from .models import StepChallenge, Team, Participant, StepEntry
+from .forms import TeamAdminForm
 
 @admin.register(StepChallenge)
 class StepChallengeAdmin(admin.ModelAdmin):
@@ -36,11 +37,11 @@ class StepChallengeAdmin(admin.ModelAdmin):
 
 class TeamInline(admin.TabularInline):
     model = Team
+    form = TeamAdminForm
     extra = 1
 
 
 StepChallengeAdmin.inlines = [TeamInline]
-
 
 @admin.register(Participant)
 class ParticipantAdmin(admin.ModelAdmin):
