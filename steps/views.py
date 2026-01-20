@@ -7,6 +7,8 @@ from django.core.exceptions import PermissionDenied
 from .models import StepEntry, Participant, StepChallenge
 from django.utils.timezone import now
 from collections import defaultdict
+from django.views.generic import TemplateView
+from django.db.models import OuterRef, Subquery, Sum
 
 
 challenges = [
@@ -168,3 +170,90 @@ class StepEntryListView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         # Show only the logged-in participant's entries
         return StepEntry.objects.filter(participant__user=self.request.user)
+
+
+class LeaderboardView(TemplateView):
+    template_name = "steps/leaderboard.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        # All challenges user participated in
+        challenges = (
+            StepChallenge.objects
+            .filter(teams__participants__user=self.request.user)
+            .distinct()
+            .order_by("-start_date")
+        )
+
+        context["challenges"] = challenges
+
+        # Selected challenge
+        challenge_id = self.request.GET.get("challenge")
+
+        if challenge_id:
+            challenge = StepChallenge.objects.get(id=challenge_id)
+        else:
+            challenge = challenges.filter(is_active=True).first() or challenges.first()
+
+        context["challenge"] = challenge
+
+        if not challenge:
+            return context
+
+        if challenge.is_active:
+            today = now().date()
+
+            total_days = (challenge.end_date - challenge.start_date).days + 1
+            days_elapsed = (today - challenge.start_date).days + 1
+            days_elapsed = max(min(days_elapsed, total_days), 0)
+
+            days_left = (challenge.end_date - today).days
+            days_left = max(days_left, 0)
+
+            progress_percent = int((days_elapsed / total_days) * 100)
+
+            context.update({
+                "days_left": days_left,
+                "total_days": total_days,
+                "days_elapsed": days_elapsed,
+                "progress_percent": progress_percent,
+            })
+
+        # 🔹 Subquery to get latest entry per participant
+        latest_entry = (
+            StepEntry.objects
+            .filter(
+                participant=OuterRef("pk"),
+                challenge=challenge
+            )
+            .order_by("-date")
+            .values("total_steps")[:1]
+        )
+
+        # 🧍 Participant leaderboard
+        participants = (
+            Participant.objects
+            .filter(team__challenge=challenge)
+            .annotate(latest_steps=Subquery(latest_entry))
+            .select_related("user", "team")
+            .order_by("-latest_steps")
+        )
+
+        context["participants"] = participants
+
+        # 🏆 Team leaderboard
+        teams = (
+            participants
+            .values(
+                "team__id",
+                "team__name",
+                "team__color",
+            )
+            .annotate(team_steps=Sum("latest_steps"))
+            .order_by("-team_steps")
+        )
+
+        context["teams"] = teams
+
+        return context

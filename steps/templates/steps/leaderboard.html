@@ -1,38 +1,131 @@
 {% extends "steps/base.html" %}
-
 {% block content %}
-    <section class="section">
-  <div class="container">
-
-    <h1 class="title is-4 has-text-centered mb-5">
-      Leaderboard
-    </h1>
-
-    <div class="columns is-centered">
-      <div class="column is-12-mobile is-6-tablet is-6-desktop">
-
-        <div class="table-container">
-          <table class="table is-striped is-hoverable is-fullwidth">
-            <thead>
-              <tr>
-                <th>Rank</th>
-                <th>Name</th>
-                <th class="has-text-right">Total Steps</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr><td>1</td><td>Alice Johnson</td><td class="has-text-right">980</td></tr>
-              <tr><td>2</td><td>Brian Smith</td><td class="has-text-right">945</td></tr>
-              <tr><td>3</td><td>Carla Nguyen</td><td class="has-text-right">910</td></tr>
-              <!-- … rows 4–24 unchanged … -->
-              <tr><td>24</td><td>Zack Miller</td><td class="has-text-right">580</td></tr>
-            </tbody>
-          </table>
-        </div>
-
-      </div>
+<section class="section">
+    <div class="has-text-centered mb-4">
+        <h1 class="title has-text-centered">{{ challenge.name }} Leaderboard</h1>
+        <p class="is-size-10 has-text-grey">
+            {{ challenge.start_date|date:"F j, Y" }}
+            –
+            {{ challenge.end_date|date:"F j, Y" }}
+        </p>
+        {% if challenge.is_active %}
+            {% if days_left == 0 %}
+                <span class="tag is-danger is-light is-large">🎉 Final Day!</span>
+            {% elif days_left <= 10 %}
+                <span class="tag is-danger is-light is-medium">
+                    🔥 Day {{ days_elapsed }}: {{ days_left }} day{{ days_left|pluralize }} left
+                </span>
+            {% else %}
+                <span class="tag is-info is-light is-medium">
+                    ⏳ Day {{ days_elapsed }}: {{ days_left }} day{{ days_left|pluralize }} remaining
+                </span>
+            {% endif %}
+        {% endif %}
     </div>
-
-  </div>
+    <progress class="progress is-{% if days_left <= 3 %}danger{% else %}primary{% endif %} is-small"
+                value="{{ progress_percent }}"
+                max="100">
+        {{ progress_percent }}%
+    </progress>
+    {% if challenge %}
+        <div class="columns">
+            <!-- 🏆 TEAM LEADERBOARD -->
+            <div class="column is-6">
+                <h2 class="subtitle">Teams</h2>
+                <table class="table is-fullwidth is-striped">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Team</th>
+                            <th>Total Steps</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for team in teams %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>
+                                    {% if forloop.counter == 1 %}
+                                        🥇
+                                    {% elif forloop.counter == 2 %}
+                                        🥈
+                                    {% elif forloop.counter == 3 %}
+                                        🥉
+                                    {% endif %}
+                                    <span style="display: inline-block;
+                                                    width: 10px;
+                                                    height: 10px;
+                                                    border-radius: 50%;
+                                                    background-color: {{ team.team__color }};
+                                                    margin-right: 6px"></span>
+                                    {{ team.team__name }}
+                                </td>
+                                <td>{{ team.team_steps|default:0 }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <!-- 🥇 PARTICIPANT LEADERBOARD -->
+            <div class="column is-6">
+                <h2 class="subtitle">Participants</h2>
+                <table class="table is-fullwidth is-striped">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Team</th>
+                            <th>Steps</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for p in participants %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>
+                                    {% if forloop.counter == 1 %}
+                                        🥇
+                                    {% elif forloop.counter == 2 %}
+                                        🥈
+                                    {% elif forloop.counter == 3 %}
+                                        🥉
+                                    {% endif %}
+                                    {{ p.user.first_name }} {{ p.user.last_name }}
+                                </td>
+                                <td>
+                                    <span style="display: inline-block;
+                                                    width: 10px;
+                                                    height: 10px;
+                                                    border-radius: 50%;
+                                                    background-color: {{ p.team.color }};
+                                                    margin-right: 6px"></span>
+                                    {{ p.team.name }}
+                                </td>
+                                <td>{{ p.latest_steps|default:0 }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {% else %}
+        <p class="has-text-centered has-text-grey">No active challenge.</p>
+    {% endif %}
+    <form method="get" class="mb-5 has-text-centered">
+        <div class="field is-grouped is-justify-content-center">
+            <div class="control">
+                <div class="select">
+                    <select name="challenge" onchange="this.form.submit()">
+                        {% for c in challenges %}
+                            <option value="{{ c.id }}" {% if c.id == challenge.id %}selected{% endif %}>
+                                {{ c.name }}
+                                {% if c.is_active %}(Active){% endif %}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+        </div>
+    </form>
 </section>
 {% endblock content %}
