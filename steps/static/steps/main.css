@@ -62,3 +62,8 @@ a.navbar-item.is-active {
 .section.is-soft {
     background-color: var(--brand-soft-bg);
 }
+
+/* form input */
+.input-narrow {
+    max-width: 160px;
+}

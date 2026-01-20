@@ -1,7 +1,7 @@
 # forms.py
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
-from .models import Team
+from .models import Team, StepEntry
 
 
 class BulmaLoginForm(AuthenticationForm):
@@ -24,4 +24,21 @@ class TeamAdminForm(forms.ModelForm):
                     "style": "width: 60px; height: 34px; padding: 0;",
                 }
             )
+        }
+
+
+class StepEntryForm(forms.ModelForm):
+    class Meta:
+        model = StepEntry
+        fields = ["challenge", "date", "total_steps"]
+        widgets = {
+            "date": forms.DateInput(
+                attrs={
+                    "type": "date",
+                    "class": "input",
+                }
+            ),
+            "total_steps": forms.NumberInput(
+                attrs={"class": "input"}
+            ),
         }

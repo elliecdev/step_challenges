@@ -80,6 +80,9 @@ class StepEntry(models.Model):
         ordering = ["date"]
 
     def clean(self):
+        if not self.participant_id or not self.challenge_id:
+            return
+        
         # Block if challenge is closed by admin
         if not self.challenge.is_active:
             raise ValidationError(

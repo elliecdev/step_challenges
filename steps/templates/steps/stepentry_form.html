@@ -1,0 +1,184 @@
+{% extends "steps/base.html" %}
+{% load form_tags %}
+{% block content %}
+<section class="section">
+  <div class="container">
+
+    <div class="columns">
+
+      <!-- LEFT COLUMN (WIDER) -->
+      <div class="column is-6">
+        <h2 class="title is-4">Add Steps</h2>
+
+        <div class="box">
+          {% if form.errors %}
+            <div class="notification is-danger">
+                <ul>
+                {% for field, errors in form.errors.items %}
+                    {% for error in errors %}
+                    <li>{{ error }}</li>
+                    {% endfor %}
+                {% endfor %}
+                </ul>
+            </div>
+          {% endif %}
+          <form method="post">
+            {% csrf_token %}
+
+            <div class="field">
+                <label class="label">Challenge</label>
+
+                {% if single_challenge %}
+                    <div class="control">
+                        <p class="has-text-weight-semibold">
+                            {{ active_challenges.first.name }}
+                        </p>
+                    </div>
+
+                    <div class="columns is-mobile is-vcentered">
+                        <div class="column is-narrow">
+                            <span
+                            class="tag is-large"
+                            style="background-color: {{ participant.team.color }};"
+                            ></span>
+                        </div>
+
+                        <div class="column">
+                            <p class="has-text-weight-semibold">
+                            {{ participant.user.first_name }} {{ participant.user.last_name }}
+                            </p>
+                            <p class="is-size-7" style="color: {{ participant.team.color }}">
+                            Team {{ participant.team.name }}
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Hidden field so form still submits -->
+                    <input
+                        type="hidden"
+                        name="challenge"
+                        value="{{ active_challenges.first.id }}"
+                    >
+                {% else %}
+                    <div class="control">
+                        {{ form.challenge }}
+                    </div>
+                {% endif %}
+            </div>
+            <div class="columns is-mobile is-vcentered">
+                <div class="column is-narrow">
+                    <div class="field">
+                        <label class="label">Date</label>
+                        <div class="control">
+                            {{ form.date|add_class:"input input-narrow" }}
+                        </div>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="field">
+                        <label class="label">Total Steps</label>
+                        <div class="control">
+                            {{ form.total_steps|add_class:"input input-narrow" }}
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- DATE & TOTAL STEPS -->
+            {% comment %} <div class="field">
+                <label class="label">Date</label>
+                <div class="control">
+                    {{ form.date|add_class:"input input-narrow" }}
+                </div>
+                </div>
+
+                <div class="field">
+                <label class="label">Total Steps</label>
+                <div class="control">
+                    {{ form.total_steps|add_class:"input input-narrow" }}
+                </div>
+            </div> {% endcomment %}
+
+            <div class="field">
+              <button type="submit" class="button is-primary is-fullwidth">
+                Submit Steps
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- RIGHT COLUMN (PAST ENTRIES) -->
+      <div class="column is-4">
+        <h2 class="title is-4">My Previous Entries</h2>
+
+        <div class="box" style="max-height: 420px; overflow-y: auto;">
+          {% if entries_by_challenge %}
+            {% for challenge, entries in entries_by_challenge.items %}
+            <div class="mb-4">
+
+                <!-- Challenge header -->
+                <div class="is-flex is-align-items-center mb-2">
+                <span
+                    style="
+                    width: 12px;
+                    height: 12px;
+                    border-radius: 50%;
+                    background-color: {{ entries.0.participant.team.color }};
+                    "
+                ></span>
+                <span class="ml-2 is-size-12" style="color: {{ entries.0.participant.team.color }}">
+                    Team {{ entries.0.participant.team.name }}
+                </span>
+                <span
+                    style="margin-left: 10px">
+                    <strong>{{ challenge.name }}</strong>
+                </span>
+
+                </div>
+
+                <!-- Entries list -->
+                {% comment %} <ul class="is-size-7 has-text-grey-dark">
+
+                {% for entry in entries %}
+                    <li class="mb-1">
+                    <span class="has-text-grey">{{ entry.date }}</span>
+                    —
+                    <strong>{{ entry.total_steps }}</strong> steps
+                    </li>
+                {% endfor %}
+                </ul> {% endcomment %}
+
+                <table class="table is-fullwidth is-striped is-hoverable">
+                    <thead>
+                        <tr>
+                        <th>Date</th>
+                        <th>Steps</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for entry in entries %}
+                        <tr>
+                            <td class="has-text-grey">{{ entry.date }}</td>
+                            <td>{{ entry.total_steps }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+            </div>
+            {% endfor %}
+        {% else %}
+            <p class="has-text-grey">
+            No step entries yet.
+            </p>
+        {% endif %}
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+{% endblock %}
