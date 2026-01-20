@@ -46,15 +46,6 @@ def home(request):
     }
     return render(request, 'steps/home.html', context)
 
-
-def leaderboard(request):
-    context = {
-        'current_challenge': challenges[0],
-        'challenges': challenges,
-    }
-    return render(request, 'steps/leaderboard.html', context)
-
-
 class FrontendLoginView(LoginView):
     template_name = "steps/login.html"
     authentication_form = BulmaLoginForm
