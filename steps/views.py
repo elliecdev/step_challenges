@@ -46,6 +46,7 @@ def home(request):
     }
     return render(request, 'steps/home.html', context)
 
+
 class FrontendLoginView(LoginView):
     template_name = "steps/login.html"
     authentication_form = BulmaLoginForm
@@ -81,7 +82,7 @@ class StepEntryCreateView(LoginRequiredMixin, CreateView):
         initial["date"] = now().date()
 
         return initial
-    
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
@@ -119,6 +120,8 @@ class StepEntryCreateView(LoginRequiredMixin, CreateView):
         # single challenge participant info
         if context["single_challenge"]:
             challenge = challenges.first()
+            context.update(get_challenge_days(challenge))
+
             participant = Participant.objects.select_related(
                 "user", "team"
             ).get(
@@ -193,23 +196,7 @@ class LeaderboardView(TemplateView):
             return context
 
         if challenge.is_active:
-            today = now().date()
-
-            total_days = (challenge.end_date - challenge.start_date).days + 1
-            days_elapsed = (today - challenge.start_date).days + 1
-            days_elapsed = max(min(days_elapsed, total_days), 0)
-
-            days_left = (challenge.end_date - today).days
-            days_left = max(days_left, 0)
-
-            progress_percent = int((days_elapsed / total_days) * 100)
-
-            context.update({
-                "days_left": days_left,
-                "total_days": total_days,
-                "days_elapsed": days_elapsed,
-                "progress_percent": progress_percent,
-            })
+            context.update(get_challenge_days(challenge))
 
         # 🔹 Subquery to get latest entry per participant
         latest_entry = (
@@ -248,3 +235,25 @@ class LeaderboardView(TemplateView):
         context["teams"] = teams
 
         return context
+
+
+def get_challenge_days(challenge):
+    """
+    Returns a dict with:
+    - days_elapsed: number of days passed since challenge started (min 0)
+    - days_left: number of days remaining until challenge ends (min 0)
+    - total_days: total duration of the challenge
+    - progress_percent: percentage of time elapsed in challenge
+    """
+    today = now().date()
+    total_days = (challenge.end_date - challenge.start_date).days + 1
+    days_elapsed = (today - challenge.start_date).days + 1
+    days_left = (challenge.end_date - today).days
+    progress_percent = int((days_elapsed / total_days) * 100)
+
+    return {
+        "total_days": max(total_days, 1),
+        "days_elapsed": max(days_elapsed, 0),
+        "days_left": max(days_left, 0),
+        "progress_percent": progress_percent
+    }

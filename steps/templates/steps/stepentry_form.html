@@ -20,17 +20,39 @@
                     <form method="post">
                         {% csrf_token %}
                         <div class="field">
-                            <label class="label">Challenge</label>
+                            <label class="label">Step Challenge</label>
                             {% if single_challenge %}
-                                <div class="control">
-                                    <p class="has-text-weight-semibold">{{ active_challenges.first.name }}</p>
-                                </div>
                                 <div class="columns is-mobile is-vcentered">
+                                    <div class="column is-narrow">
+                                        <p class="has-text-weight-semibold">{{ active_challenges.first.name }}</p>
+                                    </div>
+                                    <div class="column is-narrow">
+                                        {% if days_left == 0 %}
+                                            <span class="tag is-danger is-light is-large">🎉 Final Day!</span>
+                                        {% elif days_left <= 10 %}
+                                            <span class="tag is-danger is-light is-medium">
+                                                🔥 {{ days_left }} day{{ days_left|pluralize }} left
+                                            </span>
+                                        {% else %}
+                                            <span class="tag is-info is-light is-medium">
+                                                ⏳ {{ days_left }} day{{ days_left|pluralize }} remaining
+                                            </span>
+                                        {% endif %}
+                                    </div>
+                                    <div class="column">
+                                        <p class="is-size-7 has-text-grey">
+                                            Started: {{ active_challenges.first.start_date|date:"F j, Y" }}
+                                            <br />
+                                            Ends: {{ active_challenges.first.end_date|date:"F j, Y" }}
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="columns">
                                     <div class="column is-narrow">
                                         <span class="tag is-large"
                                               style="background-color: {{ participant.team.color }}"></span>
                                     </div>
-                                    <div class="column">
+                                    <div class="column is-narrow">
                                         <p class="has-text-weight-semibold">{{ participant.user.first_name }} {{ participant.user.last_name }}</p>
                                         <p class="is-size-7" style="color: {{ participant.team.color }}">Team {{ participant.team.name }}</p>
                                     </div>
