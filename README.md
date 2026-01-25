@@ -135,15 +135,17 @@ This prevents double-counting and ensures rankings reflect the most recent progr
 
 ### 🖼 Visual Data Model (Mermaid)
 
+User is Django's built-in auth_user table
+
 ```mermaid
 erDiagram
-    USER (Django built-in) ||--o{ PARTICIPANT : "1 user → many participants"
+    USER ||--o{ PARTICIPANT : "1 user → many participants"
     PARTICIPANT ||--o{ STEPENTRY : "1 participant → many step entries"
     PARTICIPANT }o--|| TEAM : "many participants → 1 team"
     TEAM }o--|| STEPCHALLENGE : "many teams → 1 challenge"
     STEPCHALLENGE ||--o{ STEPENTRY : "1 challenge → many step entries"
 
-    USER (Django built-in) {
+    USER {
         int id PK
         varchar username
         varchar password
