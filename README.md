@@ -39,6 +39,9 @@ Built as a friendly, lightweight challenge platform with a clean UI and simple d
 ```bash
 git clone https://github.com/elliecdev/step_challenges.git
 cd step_challenges
+```
+
+---
 
 ### 2️⃣ Create and activate a virtual environment
 
@@ -173,6 +176,7 @@ erDiagram
         int total_steps
         datetime created_at
     }
+```
 
 ## 🧭 Roadmap / Ideas
 
