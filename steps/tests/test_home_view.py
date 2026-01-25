@@ -75,16 +75,15 @@ class HomeViewParticipantLookupTest(TestCase):
         self.assertEqual(participant.team, self.team)
         self.assertEqual(participant.team.challenge, self.challenge)
 
+    def test_home_view_no_participant_when_user_not_in_challenge(self):
+        other_user = User.objects.create_user(
+            username="bob",
+            password="password123",
+        )
 
-def test_home_view_no_participant_when_user_not_in_challenge(self):
-    other_user = User.objects.create_user(
-        username="bob",
-        password="password123",
-    )
+        self.client.login(username="bob", password="password123")
 
-    self.client.login(username="bob", password="password123")
+        response = self.client.get(reverse("steps-home"))
 
-    response = self.client.get(reverse("steps-home"))
-
-    self.assertEqual(response.status_code, 200)
-    self.assertIsNone(response.context.get("participant"))
+        self.assertEqual(response.status_code, 200)
+        self.assertIsNone(response.context.get("participant"))
