@@ -122,7 +122,18 @@ This prevents double-counting and ensures rankings reflect the most recent progr
 
 ---
 
-## 🖼 Visual Data Model (Mermaid)
+## Data Model
+
+### Relationship Diagram (Textual)
+    StepChallenge
+    ├── 1:N Teams
+    │      └── 1:N Participants
+    │                      |
+    └──1:N StepEntries     └── 1:N StepEntries
+
+
+
+### 🖼 Visual Data Model (Mermaid)
 
 ```mermaid
 erDiagram
@@ -132,7 +143,7 @@ erDiagram
     TEAM }o--|| STEPCHALLENGE : "many teams → 1 challenge"
     STEPCHALLENGE ||--o{ STEPENTRY : "1 challenge → many step entries"
 
-    USER {
+    USER (Django built-in) {
         int id PK
         varchar username
         varchar password
