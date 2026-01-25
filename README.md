@@ -137,7 +137,7 @@ This prevents double-counting and ensures rankings reflect the most recent progr
 
 ```mermaid
 erDiagram
-    USER ||--o{ PARTICIPANT : "1 user → many participants"
+    USER (Django built-in) ||--o{ PARTICIPANT : "1 user → many participants"
     PARTICIPANT ||--o{ STEPENTRY : "1 participant → many step entries"
     PARTICIPANT }o--|| TEAM : "many participants → 1 team"
     TEAM }o--|| STEPCHALLENGE : "many teams → 1 challenge"

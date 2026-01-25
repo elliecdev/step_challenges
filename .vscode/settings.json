@@ -6,7 +6,7 @@
         "./" // Project root
     ],
     // === Formatting ===
-    "editor.formatOnSave": true,
+    // "editor.formatOnSave": true,
     "python.formatting.provider": "black",
     "editor.codeActionsOnSave": {
         "source.organizeImports": "explicit"
