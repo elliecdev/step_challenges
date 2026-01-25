@@ -8,7 +8,7 @@ from .models import StepEntry, Participant, StepChallenge
 from django.utils.timezone import now
 from collections import defaultdict
 from django.views.generic import TemplateView
-from django.db.models import OuterRef, Subquery, Sum
+from django.db.models import OuterRef, Subquery, Sum, Max
 
 
 challenges = [
@@ -39,12 +39,111 @@ challenges = [
 ]
 
 
-def home(request):
-    context = {
-        'current_challenge': challenges[0],
-        'challenges': challenges,
-    }
-    return render(request, 'steps/home.html', context)
+class HomeView(TemplateView):
+    template_name = "steps/home.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+
+        # --------------------
+        # Current active challenge
+        # --------------------
+        current_challenge = (
+            StepChallenge.objects
+            .filter(is_active=True)
+            .order_by("-start_date")
+            .first()
+        )
+        context["current_challenge"] = current_challenge
+
+        if not current_challenge:
+            return context  # No active challenge → template handles empty state
+
+        # --------------------
+        # Challenge timing (REUSED helper)
+        # --------------------
+        context.update(get_challenge_days(current_challenge))
+
+        # --------------------
+        # Participant (if logged in & enrolled)
+        # --------------------
+        participant = None
+        if user.is_authenticated:
+            participant = (
+                Participant.objects
+                .filter(user=user, team__challenge=current_challenge)
+                .select_related("team", "user")
+                .first()
+            )
+        context["participant"] = participant
+
+        # --------------------
+        # Latest personal entry
+        # --------------------
+        context["latest_entry"] = (
+            StepEntry.objects
+            .filter(participant=participant)
+            .order_by("-date")
+            .first()
+            if participant
+            else None
+        )
+
+        # --------------------
+        # Top participants (Top 3)
+        # --------------------
+        top_participants_qs = (
+            Participant.objects
+            .filter(team__challenge=current_challenge)
+            .annotate(latest_steps=Max("step_entries__total_steps"))
+            .select_related("user", "team")
+            .order_by("-latest_steps")
+        )
+        context["top_participants"] = top_participants_qs[:3]
+
+        # --------------------
+        # Top teams (Top 3)
+        # --------------------
+        top_teams_qs = (
+            Participant.objects
+            .filter(team__challenge=current_challenge)
+            .values("team__id", "team__name", "team__color")
+            .annotate(team_steps=Sum("step_entries__total_steps"))
+            .order_by("-team_steps")
+        )
+        context["top_teams"] = top_teams_qs[:3]
+
+        # --------------------
+        # Quick stats
+        # --------------------
+        total_steps = (
+            StepEntry.objects
+            .filter(participant__team__challenge=current_challenge)
+            .aggregate(total=Sum("total_steps"))["total"] or 0
+        )
+        participant_count = Participant.objects.filter(team__challenge=current_challenge).count()
+        entry_count = StepEntry.objects.filter(participant__team__challenge=current_challenge).count()
+        avg_steps = int(total_steps / participant_count) if participant_count else 0
+
+        context["quick_stats"] = {
+            "total_steps": total_steps,
+            "participant_count": participant_count,
+            "entry_count": entry_count,
+            "avg_steps": avg_steps,
+        }
+
+        # --------------------
+        # Recent activity (latest 5)
+        # --------------------
+        context["recent_entries"] = (
+            StepEntry.objects
+            .filter(participant__team__challenge=current_challenge)
+            .select_related("participant__user", "participant__team")
+            .order_by("-date")[:5]
+        )
+
+        return context
 
 
 class FrontendLoginView(LoginView):
