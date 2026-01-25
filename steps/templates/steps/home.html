@@ -83,51 +83,87 @@
       </div>
       {% endif %}
 
-      {# 3. MINI LEADERBOARDS #}
-      <div class="column is-12 is-8">
+        {# 3️⃣ MINI LEADERBOARDS (Table Format in Boxes) #}
+        <div class="column is-12 is-8">
         <div class="columns is-variable is-3">
 
-          <!-- Teams -->
-          <div class="column">
+            <!-- 🏆 TEAM LEADERBOARD -->
+            <div class="column">
             <div class="box">
-              <h2 class="title is-6">🏆 Teams</h2>
-              <ul>
-                {% for team in top_teams %}
-                  <li class="is-flex is-justify-content-space-between">
-                    <span>
-                      {% if forloop.counter == 1 %}🥇{% elif forloop.counter == 2 %}🥈{% elif forloop.counter == 3 %}🥉{% endif %}
-                      {{ team.team__name }}
-                    </span>
-                    <strong>{{ team.total_steps }}</strong>
-                  </li>
-                {% endfor %}
-              </ul>
-              <a href="{% url 'steps-leaderboard' %}" class="is-size-7">
+                <h2 class="title is-6">Teams 🏆</h2>
+                <table class="table is-fullwidth is-striped is-hoverable">
+                <thead>
+                    <tr>
+                    <th>#</th>
+                    <th>Team</th>
+                    <th>Total Steps</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for team in top_teams %}
+                    <tr>
+                        <td>{% if forloop.counter == 1 %}🥇{% elif forloop.counter == 2 %}🥈{% elif forloop.counter == 3 %}🥉{% endif %}</td>
+                        <td>
+                        <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background-color:{{ team.team__color }};margin-right:6px"></span>
+                        {{ team.team__name }}
+                        </td>
+                        <td>{{ team.team_total|default:0 }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="3" class="has-text-grey">No team data yet.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                </table>
+                <a href="{% url 'steps-leaderboard' %}" class="is-size-7">
                 View full leaderboard →
-              </a>
+                </a>
             </div>
-          </div>
+            </div>
 
-          <!-- Participants -->
-          <div class="column">
+            <!-- 🧍 PARTICIPANT LEADERBOARD -->
+            <div class="column">
             <div class="box">
-              <h2 class="title is-6">🧍 Participants</h2>
-              <ul>
-                {% for p in top_participants %}
-                  <li class="is-flex is-justify-content-space-between">
-                    <span>
-                      {% if forloop.counter == 1 %}🥇{% elif forloop.counter == 2 %}🥈{% elif forloop.counter == 3 %}🥉{% endif %}
-                      {{ p.user.first_name|default:p.user.username }}
-                    </span>
-                    <strong>{{ p.total_steps }}</strong>
-                  </li>
-                {% endfor %}
-              </ul>
+                <h2 class="title is-6">Participants 🧍</h2>
+                <table class="table is-fullwidth is-striped is-hoverable">
+                <thead>
+                    <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Team</th>
+                    <th>Steps</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for p in top_participants %}
+                    <tr>
+                        <td>{% if forloop.counter == 1 %}🥇{% elif forloop.counter == 2 %}🥈{% elif forloop.counter == 3 %}🥉{% endif %}</td>
+                        <td>
+                        {{ p.user.first_name|default:p.user.username }} {{ p.user.last_name }}
+                        </td>
+                        <td>
+                        <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background-color:{{ p.team.color }};margin-right:6px"></span>
+                        {{ p.team.name }}
+                        </td>
+                        <td>{{ p.latest_steps|default:0 }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="has-text-grey">No participant data yet.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                </table>
+                <a href="{% url 'steps-leaderboard' %}" class="is-size-7">
+                View full leaderboard →
+                </a>
             </div>
-          </div>
+            </div>
 
         </div>
-      </div>
+        </div>
+
 
       {# 4. QUICK STATS #}
       <div class="column is-12">

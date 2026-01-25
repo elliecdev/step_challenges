@@ -9,6 +9,7 @@ from django.utils.timezone import now
 from collections import defaultdict
 from django.views.generic import TemplateView
 from django.db.models import OuterRef, Subquery, Sum, Max
+from django.db.models.functions import Coalesce
 
 
 challenges = [
@@ -56,7 +57,6 @@ class HomeView(TemplateView):
             .first()
         )
         context["current_challenge"] = current_challenge
-
         if not current_challenge:
             return context  # No active challenge → template handles empty state
 
@@ -91,28 +91,40 @@ class HomeView(TemplateView):
         )
 
         # --------------------
+        # 🔹 Subquery to get latest step total per participant
+        # --------------------
+        latest_entry_subquery = (
+            StepEntry.objects
+            .filter(
+                participant=OuterRef("pk"),
+                challenge=current_challenge
+            )
+            .order_by("-date")
+            .values("total_steps")[:1]
+        )
+
+        # --------------------
         # Top participants (Top 3)
         # --------------------
-        top_participants_qs = (
+        participants = (
             Participant.objects
             .filter(team__challenge=current_challenge)
-            .annotate(latest_steps=Max("step_entries__total_steps"))
+            .annotate(latest_steps=Coalesce(Subquery(latest_entry_subquery), 0))
             .select_related("user", "team")
             .order_by("-latest_steps")
         )
-        context["top_participants"] = top_participants_qs[:3]
+        context["top_participants"] = participants[:3]
 
         # --------------------
         # Top teams (Top 3)
         # --------------------
-        top_teams_qs = (
-            Participant.objects
-            .filter(team__challenge=current_challenge)
+        teams = (
+            participants
             .values("team__id", "team__name", "team__color")
-            .annotate(team_steps=Sum("step_entries__total_steps"))
-            .order_by("-team_steps")
+            .annotate(team_total=Sum("latest_steps"))
+            .order_by("-team_total")
         )
-        context["top_teams"] = top_teams_qs[:3]
+        context["top_teams"] = teams[:3]
 
         # --------------------
         # Quick stats
@@ -120,7 +132,7 @@ class HomeView(TemplateView):
         total_steps = (
             StepEntry.objects
             .filter(participant__team__challenge=current_challenge)
-            .aggregate(total=Sum("total_steps"))["total"] or 0
+            .aggregate(total=Coalesce(Sum("total_steps"), 0))["total"]
         )
         participant_count = Participant.objects.filter(team__challenge=current_challenge).count()
         entry_count = StepEntry.objects.filter(participant__team__challenge=current_challenge).count()
@@ -213,8 +225,6 @@ class StepEntryCreateView(LoginRequiredMixin, CreateView):
             entries_by_challenge[entry.challenge].append(entry)
 
         context["entries_by_challenge"] = dict(entries_by_challenge)
-        print("DEBUG: entries_by_challenge =", entries_by_challenge)
-        print("DEBUG: entries_by_challenge.items =", entries_by_challenge.items)
 
         # single challenge participant info
         if context["single_challenge"]:
