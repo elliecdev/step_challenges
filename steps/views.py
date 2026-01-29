@@ -281,13 +281,16 @@ class LeaderboardView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        # All challenges user participated in
-        challenges = (
-            StepChallenge.objects
-            .filter(teams__participants__user=self.request.user)
-            .distinct()
-            .order_by("-start_date")
-        )
+        # All challenges user participated in (empty for anonymous)
+        if self.request.user.is_authenticated:
+            challenges = (
+                StepChallenge.objects
+                .filter(teams__participants__user=self.request.user)
+                .distinct()
+                .order_by("-start_date")
+            )
+        else:
+            challenges = StepChallenge.objects.none()
 
         context["challenges"] = challenges
 

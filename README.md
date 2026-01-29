@@ -83,13 +83,38 @@ Visit:
 
 Run all tests for the `steps` app:
 
-    python manage.py test steps.tests
+    python manage.py test steps
 
 Tests include:
-- Home view context integrity
-- Challenge timing calculations
-- Leaderboard aggregation correctness
-- Regression tests for known bugs
+- **Models**: StepChallenge, Team, Participant, StepEntry (creation, `__str__`, StepEntry validation: date in range, no decreasing steps, closed challenge)
+- **Views**: Home (participant lookup, no active challenge, quick stats), Login, StepEntry create/list (auth, permission), Leaderboard (anonymous + with challenge), `get_challenge_days` helper
+- **Forms**: BulmaLoginForm, StepEntryForm, TeamAdminForm
+- **Templatetags**: `add_class`, `nav_active`
+- **URLs**: resolution for all named routes
+
+---
+
+## 📊 Test Coverage
+
+Install dependencies (includes `coverage`):
+
+    pip install -r requirements.txt
+
+Run tests with coverage:
+
+    coverage run --source=steps,challenges manage.py test steps
+
+View a terminal report:
+
+    coverage report
+
+Generate an HTML report (opens in browser to explore line-by-line):
+
+    coverage html
+    open htmlcov/index.html   # macOS
+    # or open htmlcov/index.html in your browser
+
+Configuration is in `.coveragerc` (omits migrations, test files, and common no-cover lines).
 
 ---
 
@@ -114,8 +139,14 @@ This prevents double-counting and ensures rankings reflect the most recent progr
     ├── models.py
     ├── views.py
     ├── urls.py
+    ├── forms.py
     ├── tests/
-    │   └── test_home_view.py
+    │   ├── test_models.py
+    │   ├── test_views.py
+    │   ├── test_home_view.py
+    │   ├── test_forms.py
+    │   ├── test_templatetags.py
+    │   └── test_urls.py
     ├── templates/
     │   └── steps/
     │       └── home.html

@@ -1,0 +1,19 @@
+[run]
+source = steps,challenges
+omit =
+    */migrations/*
+    */tests/*
+    */test_*.py
+    manage.py
+    */wsgi.py
+    */asgi.py
+
+[report]
+exclude_lines =
+    pragma: no cover
+    def __repr__
+    raise NotImplementedError
+show_missing = True
+
+[html]
+directory = htmlcov
