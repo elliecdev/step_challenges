@@ -54,31 +54,44 @@
       {% if user.is_authenticated and participant %}
       <div class="column is-12 is-4">
         <div class="box">
-          <h2 class="title is-6">🙋 You</h2>
-
-          <div class="is-flex is-align-items-center mb-2">
-            <span
-              class="mr-2"
-              style="width:10px;height:10px;border-radius:50%;background:{{ participant.team.color }};">
-            </span>
-            <strong>{{ participant.team.name }}</strong>
+          <h2 class="title is-6">🙋 Your Status</h2>
+          <div class="columns">
+            <div class="column is-narrow">
+                <span class="tag is-size-4"
+                        style="background-color: {{ participant.team.color }}"></span>
+            </div>
+            <div class="column">
+                <p class="has-text-weight-semibold">{{ participant.user.first_name }} {{ participant.user.last_name }}</p>
+                <p class="is-size-8" style="color: {{ participant.team.color }}">Team {{ participant.team.name }}</p>
+            </div>
+            <div class="column">
+                <p class="has-text-weight-semibold">Total Steps:</p>
+                {% if latest_entry %}
+                    <p class="is-size-8">{{ latest_entry.total_steps }}</p>
+                {% else %}
+                    <p class="is-size-8">0</p>
+                {% endif %}
+                {% comment %} <p class="is-size-8">{{ latest_entry.total_steps|default:0  }}</p> {% endcomment %}
+            </div>
+            <div class="column">
+                {% if latest_entry %}
+                    <p class="has-text-weight-semibold">Last entry:</p>
+                    <p class="is-size-8 has-text-grey">
+                    {{ latest_entry.date|date:"F j, Y" }}
+                    </p>
+                {% else %}
+                    <p class="is-size-8 has-text-grey">
+                    No steps logged yet
+                    </p>
+                {% endif %}
+            </div>
+          <br />
+          <div class="column">
+            <a href="{% url 'steps-add-entry' %}"
+                class="button is-primary is-small mt-3">
+                ➕ Add steps
+            </a>
           </div>
-
-          {% if latest_entry %}
-            <p class="is-size-7 has-text-grey">
-              Last entry: {{ latest_entry.total_steps }} steps<br>
-              {{ latest_entry.date|date:"F j" }}
-            </p>
-          {% else %}
-            <p class="is-size-7 has-text-grey">
-              No steps logged yet
-            </p>
-          {% endif %}
-
-          <a href="{% url 'steps-add-entry' %}"
-             class="button is-primary is-small is-fullwidth mt-3">
-            ➕ Add steps
-          </a>
         </div>
       </div>
       {% endif %}
