@@ -1,7 +1,7 @@
 {% extends "steps/base.html" %}
 {% block content %}
 <section class="section">
-    <div class="has-text-centered mb-4">
+    <div class="container is-max-desktop has-text-centered mb-4">
         <h1 class="title has-text-centered">{{ challenge.name }} Leaderboard</h1>
         <p class="is-size-10 has-text-grey">
             {{ challenge.start_date|date:"F j, Y" }}
@@ -22,92 +22,104 @@
             {% endif %}
         {% endif %}
     </div>
-    <progress class="progress is-{% if days_left <= 3 %}danger{% else %}primary{% endif %} is-small"
+
+    <div class="container is-max-desktop">
+        <progress class="progress is-{% if days_left <= 3 %}danger{% else %}primary{% endif %} is-small"
                 value="{{ progress_percent }}"
                 max="100">
-        {{ progress_percent }}%
-    </progress>
+            {{ progress_percent }}%
+        </progress>
+    </div>
+    
     {% if challenge %}
-        <div class="columns">
-            <!-- 🏆 TEAM LEADERBOARD -->
-            <div class="column is-6">
-                <h2 class="subtitle">Teams</h2>
-                <table class="table is-fullwidth is-striped">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Team</th>
-                            <th>Total Steps</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for team in teams %}
-                            <tr>
-                                <td>{{ forloop.counter }}</td>
-                                <td>
-                                    {% if forloop.counter == 1 %}
-                                        🥇
-                                    {% elif forloop.counter == 2 %}
-                                        🥈
-                                    {% elif forloop.counter == 3 %}
-                                        🥉
-                                    {% endif %}
-                                    <span style="display: inline-block;
-                                                    width: 10px;
-                                                    height: 10px;
-                                                    border-radius: 50%;
-                                                    background-color: {{ team.team__color }};
-                                                    margin-right: 6px"></span>
-                                    {{ team.team__name }}
-                                </td>
-                                <td>{{ team.team_steps|default:0 }}</td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-            <!-- 🥇 PARTICIPANT LEADERBOARD -->
-            <div class="column is-6">
-                <h2 class="subtitle">Participants</h2>
-                <table class="table is-fullwidth is-striped">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Name</th>
-                            <th>Team</th>
-                            <th>Steps</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for p in participants %}
-                            <tr>
-                                <td>{{ forloop.counter }}</td>
-                                <td>
-                                    {% if forloop.counter == 1 %}
-                                        🥇
-                                    {% elif forloop.counter == 2 %}
-                                        🥈
-                                    {% elif forloop.counter == 3 %}
-                                        🥉
-                                    {% endif %}
-                                    {{ p.user.first_name }} {{ p.user.last_name }}
-                                </td>
-                                <td>
-                                    <span style="display: inline-block;
-                                                    width: 10px;
-                                                    height: 10px;
-                                                    border-radius: 50%;
-                                                    background-color: {{ p.team.color }};
-                                                    margin-right: 6px"></span>
-                                    {{ p.team.name }}
-                                </td>
-                                <td>{{ p.latest_steps|default:0 }}</td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+    <section class="section pt-4">
+        <div class="container is-max-desktop">
+            <div class="columns">
+                <!-- 🏆 TEAM LEADERBOARD -->
+                <div class="column is-6">
+                    <div class="box">
+                        <h2 class="subtitle">Teams</h2>
+                        <table class="table is-fullwidth is-striped">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Team</th>
+                                    <th>Total Steps</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for team in teams %}
+                                    <tr>
+                                        <td>{{ forloop.counter }}</td>
+                                        <td>
+                                            {% if forloop.counter == 1 %}
+                                                🥇
+                                            {% elif forloop.counter == 2 %}
+                                                🥈
+                                            {% elif forloop.counter == 3 %}
+                                                🥉
+                                            {% endif %}
+                                            <span style="display: inline-block;
+                                                            width: 10px;
+                                                            height: 10px;
+                                                            border-radius: 50%;
+                                                            background-color: {{ team.team__color }};
+                                                            margin-right: 6px"></span>
+                                            {{ team.team__name }}
+                                        </td>
+                                        <td>{{ team.team_steps|default:0 }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- 🥇 PARTICIPANT LEADERBOARD -->
+                <div class="column is-6">
+                    <div class="box">
+                        <h2 class="subtitle">Participants</h2>
+                        <table class="table is-fullwidth is-striped">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Name</th>
+                                    <th>Team</th>
+                                    <th>Steps</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for p in participants %}
+                                    <tr>
+                                        <td>{{ forloop.counter }}</td>
+                                        <td>
+                                            {% if forloop.counter == 1 %}
+                                                🥇
+                                            {% elif forloop.counter == 2 %}
+                                                🥈
+                                            {% elif forloop.counter == 3 %}
+                                                🥉
+                                            {% endif %}
+                                            {{ p.user.first_name }} {{ p.user.last_name }}
+                                        </td>
+                                        <td>
+                                            <span style="display: inline-block;
+                                                            width: 10px;
+                                                            height: 10px;
+                                                            border-radius: 50%;
+                                                            background-color: {{ p.team.color }};
+                                                            margin-right: 6px"></span>
+                                            {{ p.team.name }}
+                                        </td>
+                                        <td>{{ p.latest_steps|default:0 }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
+    </section
     {% else %}
         <p class="has-text-centered has-text-grey">No active challenge.</p>
     {% endif %}
