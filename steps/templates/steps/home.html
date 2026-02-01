@@ -67,9 +67,9 @@
             <div class="column">
                 <p class="has-text-weight-semibold">Total Steps:</p>
                 {% if latest_entry %}
-                    <p class="is-size-8">{{ latest_entry.total_steps }}</p>
+                    <p class="is-size-8 has-text-grey">{{ latest_entry.total_steps }}</p>
                 {% else %}
-                    <p class="is-size-8">0</p>
+                    <p class="is-size-8 has-text-grey">0</p>
                 {% endif %}
                 {% comment %} <p class="is-size-8">{{ latest_entry.total_steps|default:0  }}</p> {% endcomment %}
             </div>
@@ -85,10 +85,9 @@
                     </p>
                 {% endif %}
             </div>
-          <br />
           <div class="column">
             <a href="{% url 'steps-add-entry' %}"
-                class="button is-primary is-small mt-3">
+                class="button is-primary is-size-6 mt-3">
                 ➕ Add steps
             </a>
           </div>
