@@ -48,7 +48,7 @@ class HomeViewParticipantLookupTest(TestCase):
             participant=self.participant,
             challenge=self.challenge,
             date=date.today(),
-            total_steps=5000,
+            daily_steps=5000,
         )
 
     def test_home_view_finds_participant_via_team_challenge(self):

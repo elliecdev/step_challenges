@@ -76,7 +76,7 @@ class StepEntryAdmin(admin.ModelAdmin):
         "participant",
         "challenge",
         "date",
-        "total_steps",
+        "daily_steps",
         "created_at",
     )
 
@@ -103,6 +103,6 @@ class StepEntryAdmin(admin.ModelAdmin):
         but still allow superusers to fix mistakes.
         """
         if obj and not obj.challenge.is_active and not request.user.is_superuser:
-            return self.readonly_fields + ("participant", "challenge", "date", "total_steps")
+            return self.readonly_fields + ("participant", "challenge", "date", "daily_steps")
         return self.readonly_fields
 

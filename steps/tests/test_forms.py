@@ -53,7 +53,7 @@ class StepEntryFormTest(TestCase):
         form = StepEntryForm()
         self.assertEqual(
             list(form.fields.keys()),
-            ["challenge", "date", "total_steps"],
+            ["challenge", "date", "daily_steps"],
         )
 
     def test_form_valid_with_good_data(self):
@@ -61,7 +61,7 @@ class StepEntryFormTest(TestCase):
             data={
                 "challenge": self.challenge.pk,
                 "date": date.today().isoformat(),
-                "total_steps": "6000",
+                "daily_steps": "6000",
             }
         )
         self.assertTrue(form.is_valid(), form.errors)

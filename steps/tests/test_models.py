@@ -97,7 +97,7 @@ class StepEntryModelTest(TestCase):
             participant=self.participant,
             challenge=self.challenge,
             date=date.today(),
-            total_steps=7000,
+            daily_steps=7000,
         )
         entry.save()
         self.assertIn("7000", str(entry))
@@ -108,7 +108,7 @@ class StepEntryModelTest(TestCase):
             participant=self.participant,
             challenge=self.challenge,
             date=date.today(),
-            total_steps=5000,
+            daily_steps=5000,
         )
         self.assertEqual(StepEntry.objects.count(), 1)
 
@@ -117,28 +117,28 @@ class StepEntryModelTest(TestCase):
             participant=self.participant,
             challenge=self.challenge,
             date=date.today() - timedelta(days=20),
-            total_steps=5000,
+            daily_steps=5000,
         )
         with self.assertRaises(ValidationError) as cm:
             entry.full_clean()
         self.assertIn("within the challenge period", str(cm.exception))
 
-    def test_decreasing_steps_raises_validation_error(self):
+    def test_daily_steps_can_be_less_than_previous_day(self):
+        """Daily step entries are independent per day and can go up or down."""
         StepEntry.objects.create(
             participant=self.participant,
             challenge=self.challenge,
             date=date.today() - timedelta(days=1),
-            total_steps=10000,
+            daily_steps=10000,
         )
         entry = StepEntry(
             participant=self.participant,
             challenge=self.challenge,
             date=date.today(),
-            total_steps=5000,
+            daily_steps=5000,
         )
-        with self.assertRaises(ValidationError) as cm:
-            entry.full_clean()
-        self.assertIn("cannot be less than your previous entry", str(cm.exception))
+        # Should not raise
+        entry.full_clean()
 
     def test_closed_challenge_raises_validation_error(self):
         self.challenge.is_active = False
@@ -147,7 +147,7 @@ class StepEntryModelTest(TestCase):
             participant=self.participant,
             challenge=self.challenge,
             date=date.today(),
-            total_steps=5000,
+            daily_steps=5000,
         )
         with self.assertRaises(ValidationError) as cm:
             entry.full_clean()
@@ -159,7 +159,7 @@ class StepEntryModelTest(TestCase):
             participant=self.participant,
             challenge=self.challenge,
             date=date.today() + timedelta(days=100),
-            total_steps=5000,
+            daily_steps=5000,
         )
         with self.assertRaises(ValidationError):
             entry.save()

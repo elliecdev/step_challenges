@@ -70,8 +70,8 @@ class StepEntry(models.Model):
 
     date = models.DateField()
 
-    # Cumulative steps entered by the participant
-    total_steps = models.PositiveIntegerField()
+    # Daily steps entered by the participant for this date
+    daily_steps = models.PositiveIntegerField()
 
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -95,23 +95,6 @@ class StepEntry(models.Model):
                 "Step date must be within the challenge period."
             )
 
-        # Ensure cumulative steps never decrease
-        previous_entry = (
-            StepEntry.objects
-            .filter(
-                participant=self.participant,
-                challenge=self.challenge,
-                date__lt=self.date
-            )
-            .order_by("-date")
-            .first()
-        )
-
-        if previous_entry and self.total_steps < previous_entry.total_steps:
-            raise ValidationError(
-                "Total steps cannot be less than your previous entry."
-            )
-
     def save(self, *args, **kwargs):
         self.full_clean()  # Enforce validation everywhere
         super().save(*args, **kwargs)
@@ -119,7 +102,7 @@ class StepEntry(models.Model):
     def __str__(self):
         return (
             f"{self.participant} – "
-            f"{self.total_steps} steps as of {self.date}"
+            f"{self.daily_steps} steps on {self.date}"
         )
 
 

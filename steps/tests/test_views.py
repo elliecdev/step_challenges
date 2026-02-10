@@ -96,7 +96,7 @@ class StepEntryCreateViewTest(TestCase):
         data = {
             "challenge": self.challenge.pk,
             "date": date.today().isoformat(),
-            "total_steps": "8000",
+            "daily_steps": "8000",
         }
         response = self.client.post(reverse("steps-add-entry"), data)
         self.assertEqual(response.status_code, 302)
@@ -111,7 +111,7 @@ class StepEntryCreateViewTest(TestCase):
         data = {
             "challenge": self.challenge.pk,
             "date": date.today().isoformat(),
-            "total_steps": "8000",
+            "daily_steps": "8000",
         }
         response = self.client.post(reverse("steps-add-entry"), data)
         self.assertEqual(response.status_code, 403)
@@ -136,7 +136,7 @@ class StepEntryListViewTest(TestCase):
             participant=self.participant,
             challenge=self.challenge,
             date=date.today(),
-            total_steps=5000,
+            daily_steps=5000,
         )
         other_user = User.objects.create_user(username="bob", password="p")
         other_team = make_team(self.challenge, name="B")
@@ -145,14 +145,14 @@ class StepEntryListViewTest(TestCase):
             participant=other_p,
             challenge=self.challenge,
             date=date.today(),
-            total_steps=9999,
+            daily_steps=9999,
         )
         self.client.login(username="alice", password="password123")
         response = self.client.get(reverse("steps-my-entries"))
         self.assertEqual(response.status_code, 200)
         qs = response.context["object_list"]
         self.assertEqual(qs.count(), 1)
-        self.assertEqual(qs.first().total_steps, 5000)
+        self.assertEqual(qs.first().daily_steps, 5000)
 
 
 class LeaderboardViewTest(TestCase):

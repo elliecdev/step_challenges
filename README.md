@@ -120,15 +120,13 @@ Configuration is in `.coveragerc` (omits migrations, test files, and common no-c
 
 ## 📊 Step Entry Logic (Important)
 
-Participants **do not log daily deltas**.  
+Participants **log daily step counts** for each date in a challenge.
 
-Instead:
+- Each `StepEntry` represents the **steps taken on that specific date** (`daily_steps`).
+- **Participant leaderboard**: sums all of a participant’s `daily_steps` within a challenge.
+- **Team leaderboard**: sums the total `daily_steps` of all participants assigned to the team.
 
-- Each entry represents **total cumulative steps so far** for that participant.
-- **Participant leaderboard**: shows each participant’s **latest `total_steps` entry**.
-- **Team leaderboard**: sums the **latest `total_steps` of all participants assigned to the team**.
-
-This prevents double-counting and ensures rankings reflect the most recent progress of each participant and team.
+This means all totals shown in the UI (home page status, quick stats, leaderboards) are based on the **sum of daily entries**, not a running cumulative counter.
 
 
 ---
@@ -217,7 +215,7 @@ erDiagram
         int participant_id FK
         int challenge_id FK
         date date
-        int total_steps
+        int daily_steps
         datetime created_at
     }
 ```

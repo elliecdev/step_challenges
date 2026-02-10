@@ -8,7 +8,7 @@ from .models import StepEntry, Participant, StepChallenge
 from django.utils.timezone import now
 from collections import defaultdict
 from django.views.generic import TemplateView
-from django.db.models import OuterRef, Subquery, Sum, Max
+from django.db.models import Sum, Q
 from django.db.models.functions import Coalesce
 
 
@@ -90,17 +90,13 @@ class HomeView(TemplateView):
             else None
         )
 
-        # --------------------
-        # 🔹 Subquery to get latest step total per participant
-        # --------------------
-        latest_entry_subquery = (
+        # Total steps for the participant in the current challenge (sum of daily entries)
+        context["participant_total_steps"] = (
             StepEntry.objects
-            .filter(
-                participant=OuterRef("pk"),
-                challenge=current_challenge
-            )
-            .order_by("-date")
-            .values("total_steps")[:1]
+            .filter(participant=participant, challenge=current_challenge)
+            .aggregate(total=Coalesce(Sum("daily_steps"), 0))["total"]
+            if participant
+            else 0
         )
 
         # --------------------
@@ -109,7 +105,15 @@ class HomeView(TemplateView):
         participants = (
             Participant.objects
             .filter(team__challenge=current_challenge)
-            .annotate(latest_steps=Coalesce(Subquery(latest_entry_subquery), 0))
+            .annotate(
+                latest_steps=Coalesce(
+                    Sum(
+                        "step_entries__daily_steps",
+                        filter=Q(step_entries__challenge=current_challenge),
+                    ),
+                    0,
+                )
+            )
             .select_related("user", "team")
             .order_by("-latest_steps")
         )
@@ -119,9 +123,18 @@ class HomeView(TemplateView):
         # Top teams (Top 3)
         # --------------------
         teams = (
-            participants
+            Participant.objects
+            .filter(team__challenge=current_challenge)
             .values("team__id", "team__name", "team__color")
-            .annotate(team_total=Sum("latest_steps"))
+            .annotate(
+                team_total=Coalesce(
+                    Sum(
+                        "step_entries__daily_steps",
+                        filter=Q(step_entries__challenge=current_challenge),
+                    ),
+                    0,
+                )
+            )
             .order_by("-team_total")
         )
         context["top_teams"] = teams[:3]
@@ -132,7 +145,7 @@ class HomeView(TemplateView):
         total_steps = (
             StepEntry.objects
             .filter(participant__team__challenge=current_challenge)
-            .aggregate(total=Coalesce(Sum("total_steps"), 0))["total"]
+            .aggregate(total=Coalesce(Sum("daily_steps"), 0))["total"]
         )
         participant_count = Participant.objects.filter(team__challenge=current_challenge).count()
         entry_count = StepEntry.objects.filter(participant__team__challenge=current_challenge).count()
@@ -310,22 +323,19 @@ class LeaderboardView(TemplateView):
         if challenge.is_active:
             context.update(get_challenge_days(challenge))
 
-        # 🔹 Subquery to get latest entry per participant
-        latest_entry = (
-            StepEntry.objects
-            .filter(
-                participant=OuterRef("pk"),
-                challenge=challenge
-            )
-            .order_by("-date")
-            .values("total_steps")[:1]
-        )
-
-        # 🧍 Participant leaderboard
+        # 🧍 Participant leaderboard (sum of daily steps per participant)
         participants = (
             Participant.objects
             .filter(team__challenge=challenge)
-            .annotate(latest_steps=Subquery(latest_entry))
+            .annotate(
+                latest_steps=Coalesce(
+                    Sum(
+                        "step_entries__daily_steps",
+                        filter=Q(step_entries__challenge=challenge),
+                    ),
+                    0,
+                )
+            )
             .select_related("user", "team")
             .order_by("-latest_steps")
         )
@@ -334,13 +344,22 @@ class LeaderboardView(TemplateView):
 
         # 🏆 Team leaderboard
         teams = (
-            participants
+            Participant.objects
+            .filter(team__challenge=challenge)
             .values(
                 "team__id",
                 "team__name",
                 "team__color",
             )
-            .annotate(team_steps=Sum("latest_steps"))
+            .annotate(
+                team_steps=Coalesce(
+                    Sum(
+                        "step_entries__daily_steps",
+                        filter=Q(step_entries__challenge=challenge),
+                    ),
+                    0,
+                )
+            )
             .order_by("-team_steps")
         )
 

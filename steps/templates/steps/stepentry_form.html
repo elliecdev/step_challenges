@@ -74,8 +74,8 @@
                             </div>
                             <div class="column">
                                 <div class="field">
-                                    <label class="label">Total Steps</label>
-                                    <div class="control">{{ form.total_steps|add_class:"input input-narrow" }}</div>
+                                    <label class="label">Daily Steps</label>
+                                    <div class="control">{{ form.daily_steps|add_class:"input input-narrow" }}</div>
                                 </div>
                             </div>
                         </div>
@@ -88,9 +88,9 @@
                 </div>
 
                 <div class="field">
-                <label class="label">Total Steps</label>
+                <label class="label">Daily Steps</label>
                 <div class="control">
-                    {{ form.total_steps|add_class:"input input-narrow" }}
+                    {{ form.daily_steps|add_class:"input input-narrow" }}
                 </div>
                         </div> {% endcomment %}
                         <div class="field">
@@ -131,7 +131,7 @@
                                         {% for entry in entries %}
                                             <tr>
                                                 <td class="has-text-grey">{{ entry.date }}</td>
-                                                <td>{{ entry.total_steps }}</td>
+                                                <td>{{ entry.daily_steps }}</td>
                                             </tr>
                                         {% endfor %}
                                     </tbody>

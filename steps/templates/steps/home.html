@@ -66,12 +66,9 @@
             </div>
             <div class="column">
                 <p class="has-text-weight-semibold">Total Steps:</p>
-                {% if latest_entry %}
-                    <p class="is-size-8 has-text-grey">{{ latest_entry.total_steps }}</p>
-                {% else %}
-                    <p class="is-size-8 has-text-grey">0</p>
-                {% endif %}
-                {% comment %} <p class="is-size-8">{{ latest_entry.total_steps|default:0  }}</p> {% endcomment %}
+                <p class="is-size-8 has-text-grey">
+                    {{ participant_total_steps }}
+                </p>
             </div>
             <div class="column">
                 {% if latest_entry %}
@@ -145,7 +142,7 @@
                     <th>#</th>
                     <th>Name</th>
                     <th>Team</th>
-                    <th>Steps</th>
+                    <th>Total Steps</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -206,7 +203,7 @@
             {% for entry in recent_entries %}
               <li>
                 {{ entry.participant.user.first_name|default:entry.participant.user.username }}
-                logged <strong>{{ entry.total_steps }}</strong> steps
+                logged <strong>{{ entry.daily_steps }}</strong> steps
                 ({{ entry.date|date:"M j" }})
               </li>
             {% empty %}

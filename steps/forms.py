@@ -30,7 +30,7 @@ class TeamAdminForm(forms.ModelForm):
 class StepEntryForm(forms.ModelForm):
     class Meta:
         model = StepEntry
-        fields = ["challenge", "date", "total_steps"]
+        fields = ["challenge", "date", "daily_steps"]
         widgets = {
             "date": forms.DateInput(
                 attrs={
@@ -38,7 +38,7 @@ class StepEntryForm(forms.ModelForm):
                     "class": "input",
                 }
             ),
-            "total_steps": forms.NumberInput(
+            "daily_steps": forms.NumberInput(
                 attrs={"class": "input"}
             ),
         }
