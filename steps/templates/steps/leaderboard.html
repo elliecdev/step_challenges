@@ -50,8 +50,7 @@
                             <tbody>
                                 {% for team in teams %}
                                     <tr>
-                                        <td>{{ forloop.counter }}</td>
-                                        <td>
+                                        <td>{{ forloop.counter }}
                                             {% if forloop.counter == 1 %}
                                                 🥇
                                             {% elif forloop.counter == 2 %}
@@ -59,6 +58,8 @@
                                             {% elif forloop.counter == 3 %}
                                                 🥉
                                             {% endif %}
+                                        </td>
+                                        <td>
                                             <span style="display: inline-block;
                                                             width: 10px;
                                                             height: 10px;
@@ -90,8 +91,7 @@
                             <tbody>
                                 {% for p in participants %}
                                     <tr>
-                                        <td>{{ forloop.counter }}</td>
-                                        <td>
+                                        <td>{{ forloop.counter }}
                                             {% if forloop.counter == 1 %}
                                                 🥇
                                             {% elif forloop.counter == 2 %}
@@ -99,6 +99,8 @@
                                             {% elif forloop.counter == 3 %}
                                                 🥉
                                             {% endif %}
+                                        </td>
+                                        <td>
                                             {{ p.user.first_name }} {{ p.user.last_name }}
                                         </td>
                                         <td>
