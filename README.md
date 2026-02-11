@@ -220,6 +220,102 @@ erDiagram
     }
 ```
 
+## Importing Historical Step Challenge Data
+
+The project includes an ETL (Extract, Transform, Load) management command to import step challenge data from a CSV file.
+
+### CSV File Format
+
+The CSV file should have the following columns:
+- **Date** - Entry date (format: `YYYY-MM-DD`)
+- **Teams** - Team name (e.g., "Orange Team", "Red Team")
+- **Member** - Participant name (format: "FirstName LastName")
+- **Steps** - Daily step count (numbers, commas allowed)
+- **Notes** - Optional notes (ignored during import)
+
+Example:
+```
+Date,Teams,Member,Steps,Notes
+2025-12-01,Orange Team,Jane Smith,4468,
+2025-12-01,Red Team,John Doe,18138,
+```
+
+### Running the Import
+
+```bash
+python manage.py import_step_challenge /path/to/your/file.csv
+```
+
+### What the Import Does
+
+The command performs four main steps:
+
+1. **Creates Challenge** - Creates a new inactive step challenge
+   - Name: "December 2025"
+   - Start/End dates: Extracted from CSV data
+   - Status: `is_active=False`
+
+2. **Creates Teams** - Extracts unique team names from the CSV
+   - Team names are extracted from the "Teams" column
+   - Colors are automatically mapped based on team name (Orange→#FFA500, Red→#FF0000, etc.)
+   - Creates or reuses existing teams
+
+3. **Creates Participants** - Generates user accounts and participant records
+   - Parses "FirstName LastName" format from the Member column
+   - Creates usernames as `firstname.lastname` (lowercase, no spaces)
+   - No password is set; users must reset their password to log in
+   - Assigns each participant to their team
+
+4. **Creates Step Entries** - Imports daily step counts
+   - Parses dates in `YYYY-MM-DD` format
+   - Converts step counts (handles commas in numbers)
+   - Gracefully skips rows with missing data
+   - Uses batch operations for efficiency
+
+### Import Behavior
+
+- **Idempotent**: Safe to run multiple times; won't create duplicates
+- **Resilient**: Skips invalid or missing data and reports warnings
+- **Efficient**: Uses `bulk_create()` for fast database operations
+- **Historical Data**: Bypasses model validation to allow closed-challenge entries
+
+### Example Output
+
+```
+Starting ETL process...
+✓ Challenge created: December 2025
+✓ 6 teams created
+  Created: Orange Team (#FFA500)
+  Created: Red Team (#FF0000)
+  ...
+✓ 24 participants created
+  Created: jane.smith (Orange Team)
+  Created: john.doe (Red Team)
+  ...
+✓ 508 step entries created
+  Created: 508 entries
+  Skipped: 236 entries
+✓ ETL process completed successfully!
+```
+
+### Supported Team Colors
+
+The script includes built-in color mappings for common team names:
+- Orange Team → `#FFA500`
+- Red Team → `#FF0000`
+- Blue Team → `#0000FF`
+- Green Team → `#008000`
+- Yellow Team → `#FFFF00`
+- Brown Team → `#8B4513`
+
+To add additional team colors, edit the `COLOR_MAP` dictionary in `steps/management/commands/import_step_challenge.py`.
+
+### Notes
+
+- Users created during import have **no usable password** set
+- Users must complete a password reset to log in
+- Historical data is imported with `is_active=False` to prevent validation errors on closed challenges
+
 ## 🧭 Roadmap / Ideas
 
 - ⏳ Historical progress charts
