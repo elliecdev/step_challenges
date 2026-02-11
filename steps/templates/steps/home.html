@@ -181,7 +181,7 @@
         <div class="box">
           <div class="columns has-text-centered">
             <div class="column">
-              <p class="title is-5">{{ quick_stats.total_steps }}</p>
+              <p class="title is-5">{{ quick_stats.total_steps|intcomma }}</p>
               <p class="is-size-7 has-text-grey">Total steps</p>
             </div>
             <div class="column">
@@ -189,7 +189,7 @@
               <p class="is-size-7 has-text-grey">Participants</p>
             </div>
             <div class="column">
-              <p class="title is-5">{{ quick_stats.avg_steps }}</p>
+              <p class="title is-5">{{ quick_stats.avg_steps|intcomma }}</p>
               <p class="is-size-7 has-text-grey">Avg / person</p>
             </div>
           </div>
@@ -204,7 +204,7 @@
             {% for entry in recent_entries %}
               <li>
                 {{ entry.participant.user.first_name|default:entry.participant.user.username }}
-                logged <strong>{{ entry.daily_steps }}</strong> steps
+                logged <strong>{{ entry.daily_steps|intcomma }}</strong> steps
                 ({{ entry.date|date:"M j" }})
               </li>
             {% empty %}
