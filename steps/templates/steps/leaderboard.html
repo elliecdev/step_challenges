@@ -119,15 +119,15 @@
                 </div>
             </div>
         </div>
-    </section
+    </section>
     {% else %}
         <p class="has-text-centered has-text-grey">No active challenge.</p>
     {% endif %}
-    <form method="get" class="mb-5 has-text-centered">
+    <form method="get" class="mb-5 has-text-centered" id="challenge-form">
         <div class="field is-grouped is-justify-content-center">
             <div class="control">
                 <div class="select">
-                    <select name="challenge" onchange="this.form.submit()">
+                    <select name="challenge" id="challenge-select" onchange="document.getElementById('challenge-form').submit()">
                         {% for c in challenges %}
                             <option value="{{ c.id }}" {% if c.id == challenge.id %}selected{% endif %}>
                                 {{ c.name }}
