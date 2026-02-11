@@ -1,4 +1,5 @@
 {% extends "steps/base.html" %}
+{% load humanize %}
 {% block content %}
 
 {% if current_challenge %}
@@ -62,12 +63,12 @@
             </div>
             <div class="column">
                 <p class="has-text-weight-semibold">{{ participant.user.first_name }} {{ participant.user.last_name }}</p>
-                <p class="is-size-8" style="color: {{ participant.team.color }}">Team {{ participant.team.name }}</p>
+                <p class="is-size-8">Team {{ participant.team.name }}</p>
             </div>
             <div class="column">
                 <p class="has-text-weight-semibold">Total Steps:</p>
                 <p class="is-size-8 has-text-grey">
-                    {{ participant_total_steps }}
+                    {{ participant_total_steps|intcomma }}
                 </p>
             </div>
             <div class="column">
@@ -117,7 +118,7 @@
                         <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background-color:{{ team.team__color }};margin-right:6px"></span>
                         {{ team.team__name }}
                         </td>
-                        <td>{{ team.team_total|default:0 }}</td>
+                        <td>{{ team.team_total|intcomma|default:0 }}</td>
                     </tr>
                     {% empty %}
                     <tr>
@@ -156,7 +157,7 @@
                         <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background-color:{{ p.team.color }};margin-right:6px"></span>
                         {{ p.team.name }}
                         </td>
-                        <td>{{ p.latest_steps|default:0 }}</td>
+                        <td>{{ p.latest_steps|intcomma|default:0 }}</td>
                     </tr>
                     {% empty %}
                     <tr>

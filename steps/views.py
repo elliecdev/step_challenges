@@ -165,7 +165,7 @@ class HomeView(TemplateView):
             StepEntry.objects
             .filter(participant__team__challenge=current_challenge)
             .select_related("participant__user", "participant__team")
-            .order_by("-date")[:5]
+            .order_by("-date")[:10]
         )
 
         return context
